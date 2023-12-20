@@ -7,7 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="shortcut icon" href="../midia/logo.ico" type="image/x-icon">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    
 </head>
 <body>
     <div class="container">
@@ -51,8 +52,8 @@
             </thead>
             <tbody>
             </tbody>
-        </table>
-    </div>
+        </table><br><br>
+    </div><br><br>
     <div style="text-align: center; color: #ff6600; position: sticky;">
         <hr>
         <footer>
@@ -115,9 +116,27 @@
                     calcularSomas();
                     document.getElementById("tabelaNotas").style.display = "block";
                 }
+
+                if (participanteAtual > quantidadeParticipantes && rodada === 2) {
+                    document.getElementById("insercaoRodada2").style.display = "none";
+                    calcularSomas();
+                    document.getElementById("tabelaNotas").style.display = "block";
+
+                    // Adiciona o botão de baixar tabela apenas uma vez
+                    if (!document.getElementById("downloadPDFButton")) {
+                        const downloadPDFButton = document.createElement("button");
+                        downloadPDFButton.textContent = "Baixar Tabela (PDF)";
+                        downloadPDFButton.className = "grow";
+                        downloadPDFButton.id = "downloadPDFButton";
+                        downloadPDFButton.onclick = downloadPDF();
+
+                        // Adiciona o botão após a exibição da tabela
+                        document.getElementById("tabelaNotas").parentNode.appendChild(downloadPDFButton);
+                    }
+                }
             }
         }
-    
+
         function calcularSomas() {
             const tabelaNotas = document.getElementById("tabelaNotas").getElementsByTagName('tbody')[0];
             tabelaNotas.innerHTML = "";
@@ -152,8 +171,29 @@
             notasOrdenadas.shift();
             return notasOrdenadas.reduce((total, nota) => total + nota, 0);
         }
+
+
+        function downloadPDF() {
+            // Implemente a lógica para baixar a tabela como PDF aqui
+            // alert("Botão de Baixar PDF clicado!");
+            const tabelaNotas = document.getElementById("tabelaNotas");
+
+            // Cria um novo objeto jsPDF
+            const pdf = new jsPDF();
+            
+            // Adiciona título ao PDF
+            pdf.text("Tabela de Notas", 70, 10);
+
+            // Adiciona a tabela ao PDF
+            pdf.autoTable({ html: tabelaNotas });
+
+            // Salva o PDF com um nome específico
+            pdf.save("tabela_notas.pdf");
+        }
+
     </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 </body>
